@@ -243,4 +243,90 @@ agent.md Complete Rewrite to 10/10 Standards
 - 🔍 **Quality Assurance**: Comprehensive checklists, metrics, review process
 - 🤖 **AI Integration**: Guidelines for AI-assisted development and review
 
+---### C
+ase: TypeScript Enum vs Const Assertion for Erasable Syntax
+
+**What you wrote**
+```ts
+// Original enum syntax
+export enum MilestoneStatus {
+  NOT_STARTED = 'not_started',
+  IN_PROGRESS = 'in_progress', 
+  COMPLETED = 'completed'
+}
+```
+
+**Issue / Improvement**
+- Error: "This syntax is not allowed when 'erasableSyntaxOnly' is enabled"
+- Project configured to use build tools (Babel/SWC) that require erasable TypeScript syntax
+- Enums are not erasable - they generate runtime code that can't be easily stripped
+- Need type-safe alternative that provides same functionality but is erasable
+
+**Lesson learned**
+- ใช้ const assertion object แทน enum เมื่อ project ใช้ erasable syntax
+- Pattern: `const X = {...} as const` + `type X = typeof X[keyof typeof X]`
+- ได้ type safety และ autocomplete เหมือน enum แต่ erasable
+- API เหมือนเดิม: `MilestoneStatus.NOT_STARTED` ยังใช้ได้
+- Build tools สมัยใหม่มักใช้ erasable syntax เพื่อ performance
+- ตรวจสอบ tsconfig.json และ build tool configuration เมื่อเจอ syntax errors
+
+**Fixed code**
+```ts
+export const MilestoneStatus = {
+    NOT_STARTED: 'not_started',
+    IN_PROGRESS: 'in_progress',
+    COMPLETED: 'completed'
+} as const;
+
+export type MilestoneStatus = typeof MilestoneStatus[keyof typeof MilestoneStatus];
+```
+
 ---
+##
+ TypeScript Type Assertion in Tests - Double Casting Pattern
+
+**Date:** 2025-01-09  
+**Context:** Fixing TypeScript errors in unit tests for milestone components
+
+### Problem
+When testing edge cases with invalid data in TypeScript, direct type assertion (`as Milestone`) can fail with strict type checking:
+
+```typescript
+// This fails with newer TypeScript versions
+const invalidData = {
+    ...validObject,
+    status: 'invalid_value'
+} as Milestone
+```
+
+Error: "Conversion may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first."
+
+### Solution
+Use double type assertion pattern: `as unknown as TargetType`
+
+```typescript
+// This works - double casting through unknown
+const invalidData = {
+    ...validObject,
+    status: 'invalid_value'
+} as unknown as Milestone
+```
+
+### Why This Works
+1. First cast to `unknown` - TypeScript allows any type to be cast to `unknown`
+2. Second cast from `unknown` to target type - TypeScript allows `unknown` to be cast to any type
+3. This bypasses the type compatibility check while being explicit about the intention
+
+### When to Use
+- Testing edge cases with invalid data
+- Simulating runtime scenarios that wouldn't pass compile-time checks
+- When you need to test component behavior with malformed data
+- Unit tests that verify error handling and graceful degradation
+
+### Best Practices
+- Only use in tests, not production code
+- Add comments explaining why the double cast is necessary
+- Use sparingly - prefer valid test data when possible
+- Consider if the test scenario is realistic and valuable
+
+This pattern is commonly used in testing frameworks when you need to simulate invalid or unexpected data to ensure components handle edge cases gracefully.
