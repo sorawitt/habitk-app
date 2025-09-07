@@ -1,12 +1,6 @@
-import { h } from "preact";
 import type { JSX } from "preact";
 
-// ไม่มี alias:
-// import { HeaderGoal, ProgressBar } from "../../features/goal-overview";
-import { HeaderGoalView, ProgressBar } from "../../features/goal-overview";
-
-// มี alias:
-// import { HeaderGoal, ProgressBar } from "@features/goal-overview";
+import { HeaderGoalView, ProgressBar } from "@features/goal-overview";
 
 export function HomePage(): JSX.Element {
     return (

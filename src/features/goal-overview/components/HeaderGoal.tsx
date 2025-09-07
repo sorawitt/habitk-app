@@ -1,15 +1,15 @@
-import type { JSX } from 'preact';
+import type { JSX } from "preact";
 
-interface HeaderGoalViewProps {
-    title: string
-    subtitle: string
-}
+type HeaderGoalViewProps = Readonly<{
+  title: string;
+  subtitle: string;
+}>;
 
 export function HeaderGoalView({ title, subtitle }: HeaderGoalViewProps): JSX.Element {
-    return (
-        <div class="flex flex-col">
-            <h1 class="text-xl font-bold leading-tight mb-2">{title}</h1>
-            <p class="text-sm text-slate-500 leading-snug">{subtitle}</p>
-        </div>
-    )
+  return (
+    <div className="flex flex-col">
+      <h1 className="text-xl font-bold leading-tight mb-2">{title}</h1>
+      <p className="text-sm text-slate-500 leading-snug">{subtitle}</p>
+    </div>
+  );
 }

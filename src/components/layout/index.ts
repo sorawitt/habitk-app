@@ -1,2 +1,2 @@
 export { NavigationBar } from "./NavigationBar";
-export { TabBar } from "./TabBar"
+export { TabBar } from "./TabBar";
